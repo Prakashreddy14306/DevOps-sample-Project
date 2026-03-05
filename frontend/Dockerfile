@@ -19,5 +19,7 @@ RUN npm run build
 # Expose application port
 EXPOSE 3000
 
+ENV NEXT_PUBLIC_API_URL=http://backend:8000
+
 # Start Next.js server
 CMD ["npm", "start"]
