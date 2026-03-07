@@ -1,6 +1,6 @@
 pipeline {
     agent {label 'agent-1'}
-    stages
+    stages{
         stage('Checkout') {
             steps{
                 git credentialsId: 'github-credentials', url: 'https://github.com/Prakashreddy14306/DevOps-sample-Project.git' branch: 'main'
@@ -11,8 +11,18 @@ pipeline {
                 sh ''' 
                 cd frontend
                 docker build -t frontend:latest .
-                
+                docker network create frontend-network
+                docker run -d -p 3000:3000 --network frontend-network --name frontend-container frontend:latest
+
                 '''
             }
         }
+
+        stage('downstream') {
+            steps{
+                build job: 'backend', wait: false
+            }
+        }
+
+     }
 }

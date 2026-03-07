@@ -1,0 +1,21 @@
+pipeline {
+    agent {label 'agent-1'}
+    stages{
+        stage('Checkout') {
+            steps{
+                git credentialsId: 'github-credentials', url: 'https://github.com/Prakashreddy14306/DevOps-sample-Project.git' branch: 'main'
+            }
+        }
+        stage('Docker Build') {
+            steps{
+                sh ''' 
+                cd backend
+                docker build -t backend:latest .
+                docker run -d -p 8080:8080 --network frontend-network --name backend-container backend:latest
+
+                '''
+            }
+        }
+
+     }
+}
