@@ -1,30 +1,23 @@
-# Use lightweight Node image
+# Build stage
 FROM node:20-alpine AS builder
-
-# Create working directory
 WORKDIR /app
 
-# Copy dependency files
-COPY package.json package-lock.json* ./
+COPY package*.json ./
+RUN npm ci
 
-# Install dependencies
-RUN npm install
-
-# Copy application source
 COPY . .
-
-# Build Next.js application
 RUN npm run build
 
+# Production stage
 FROM node:20-alpine
-
 WORKDIR /app
 
 COPY --from=builder /app ./
-# Expose application port
+
+RUN addgroup -S nextjs && adduser -S nextjs -G nextjs
+USER nextjs
+
+ENV NODE_ENV=production
 EXPOSE 3000
 
-ENV NEXT_PUBLIC_API_URL=http://localhost:8000
-
-# Start Next.js server
-CMD ["npm", "start"]
+CMD ["npm","start"]
