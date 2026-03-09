@@ -3,6 +3,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
+
 RUN npm ci
 
 COPY . .
@@ -17,7 +18,6 @@ COPY --from=builder /app ./
 RUN addgroup -S nextjs && adduser -S nextjs -G nextjs
 USER nextjs
 
-ENV NODE_ENV=production
 EXPOSE 3000
 
 CMD ["npm","start"]
